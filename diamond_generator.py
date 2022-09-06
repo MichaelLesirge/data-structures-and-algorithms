@@ -12,11 +12,8 @@ def create_diamond(edge_height, full_char="#", blank_char=" ") -> str:
 
 
 def main():
-    diamond_edge_height = int(input("Enter edge height of diamond: "))
-    diamond = create_diamond(diamond_edge_height, FULL_CHAR, BLACK_CHAR)
-    print()
-    print(diamond)
-
+    from runner import run
+    run(create_diamond, [("Enter edge height of diamond", (int, "input most be a number"))], output_label=None)
 
 if __name__ == "__main__":
     main()
