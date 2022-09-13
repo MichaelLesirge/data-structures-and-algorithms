@@ -12,8 +12,15 @@ def create_diamond(edge_height, full_char="#", blank_char=" ") -> str:
 
 
 def main():
-    from runner import run
-    run(create_diamond, ("Enter edge height of diamond", (int, "input most be a number")), after_input_blank_line=True, welcome_message="diamond pattern generator")
+    print("Welcome to the the diamond pattern generator!")
+
+    while True:
+        print()
+
+        edge_size = int(input("Enter edge height of diamond: "))
+
+        print()
+        print(create_diamond(edge_size))
 
 if __name__ == "__main__":
     main()

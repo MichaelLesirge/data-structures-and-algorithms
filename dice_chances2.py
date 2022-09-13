@@ -1,11 +1,9 @@
-from runner import run, welcome
-
 ROUND_TO = False
 
 def main():
     # TODO problem when there is highest and lowest role
 
-    welcome("dice chance calculator")
+    print("Welcome to dice chance calculator!")
 
     dice_sides = int(input("How many sides does the dice have: ").removeprefix("d").strip())
     num_of_dice = int(input("How many dice do you want: ").strip())
@@ -30,7 +28,11 @@ def main():
         percent_chance = calculator.pertantage_chance_of_num(user_number)
         return f"{percent_chance} chance of the sum of the dice being {user_number} on a roll"
 
-    run(percent_chance, ("Enter your number", (int, "input must be a number")))
+    while True:
+
+        number = int(input("Enter edge height of diamond: "))
+        print(percent_chance(number))
+        print()
 
 class DiceCalculator:
     """
