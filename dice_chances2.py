@@ -1,8 +1,6 @@
 ROUND_TO = False
 
 def main():
-    # TODO problem when there is highest and lowest role
-
     print("Welcome to dice chance calculator!")
 
     dice_sides = int(input("How many sides does the dice have: ").removeprefix("d").strip())
@@ -24,14 +22,10 @@ def main():
     else:
         print(f"The most likely role is a {most_common_nums[0]}.")
 
-    def percent_chance(user_number):
-        percent_chance = calculator.pertantage_chance_of_num(user_number)
-        return f"{percent_chance} chance of the sum of the dice being {user_number} on a roll"
-
     while True:
-
-        number = int(input("Enter edge height of diamond: "))
-        print(percent_chance(number))
+        number = int(input("Enter your number: "))
+        print(f"Chance of the sum of the dice being {number} on a roll:")
+        print(f"{calculator.pertantage_chance_of_num(number)}, {calculator.count_of_num(number)} in {calculator.possible_outcomes}")
         print()
 
 class DiceCalculator:
@@ -81,10 +75,10 @@ class DiceCalculator:
         """
         if self.mean % 1 == 0.5:
             return (self.median, self.median+1)
-        return (self.median, )
+        return (self.median,)
 
     def is_in_range(self, x) -> bool:
-        return self.min < x < self.max
+        return self.min <= x <= self.max
 
     @property
     def mean(self) -> float:
