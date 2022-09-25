@@ -1,6 +1,7 @@
+ROUND_TO = False
+
 def main():
-    ROUND_TO = False
-    EXIT_KEYWORDS = ("exit", "ex", "leave")
+    print("Welcome to dice chance calculator!")
 
     dice_sides = int(input("How many sides does the dice have: ").removeprefix("d").strip())
     num_of_dice = int(input("How many dice do you want: ").strip())
@@ -11,33 +12,23 @@ def main():
         print("No roles will be possible")
         return
 
-    calcultor = DiceCalcultor(sides=dice_sides, count=num_of_dice)
+    calculator = DiceCalculator(sides=dice_sides, count=num_of_dice)
     
-    most_common_nums = calcultor.most_common_nums()
+    most_common_nums = calculator.most_common_nums()
 
-    print(f"There are {calcultor.possible_outcomes} possible roles that are between {calcultor.min} and {calcultor.max}.")
+    print(f"There are {calculator.possible_outcomes} possible roles that are between {calculator.min} and {calculator.max}.")
     if len(most_common_nums) == 2:
         print(f"The most likely roles are either a {most_common_nums[0]} or a {most_common_nums[1]}.")
     else:
         print(f"The most likely role is a {most_common_nums[0]}.")
-        
 
     while True:
+        number = int(input("Enter your number: "))
+        print(f"Chance of the sum of the dice being {number} on a roll:")
+        print(f"{calculator.pertantage_chance_of_num(number)}, {calculator.count_of_num(number)} in {calculator.possible_outcomes}")
         print()
-        user_request = input("Enter your number: ")
 
-        if user_request.lower() in EXIT_KEYWORDS:
-            print("Good bye!")
-            return
-        else:
-            user_number = int(user_request)
-
-            percent_chance = calcultor.pertantage_chance_of_num(user_number, round_to=ROUND_TO)
-
-            print(f"{percent_chance} chance of roling the sum of the dice being {user_number}")
-
-
-class DiceCalcultor:
+class DiceCalculator:
     """
     I got a bit carried away with this class. So many abstractions....
     """
@@ -69,7 +60,7 @@ class DiceCalcultor:
             return 0
         return self.count_of_num(x) / self.possible_outcomes
         
-    def pertantage_chance_of_num(self, x: int, / , round_to=False) -> str:
+    def pertantage_chance_of_num(self, x: int, / , round_to=ROUND_TO) -> str:
         """
         percentage chance of roling x
         """
@@ -84,10 +75,10 @@ class DiceCalcultor:
         """
         if self.mean % 1 == 0.5:
             return (self.median, self.median+1)
-        return (self.median)
+        return (self.median,)
 
     def is_in_range(self, x) -> bool:
-        return self.min < x < self.max
+        return self.min <= x <= self.max
 
     @property
     def mean(self) -> float:

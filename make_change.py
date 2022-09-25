@@ -46,7 +46,9 @@ def make_change(total_amount, *, mode=None, value_type=None, amounts=AMOUNTS):
     current = next(amounts)
 
     while total_amount > 0:
+        print(Currency(total_amount), current)
         if total_amount - current.amount >= 0:
+            print("added change")
             total_amount -= current.amount
             add_change(current)
         else:
@@ -55,6 +57,8 @@ def make_change(total_amount, *, mode=None, value_type=None, amounts=AMOUNTS):
     return change
 
 def main():
+    print("Welcome to the change making calcultor!")
+
     output_type = dict  # list, dict
     val_type = str  # int, str, float
     
@@ -62,15 +66,17 @@ def main():
     # tendered = input("How much was given: $")
     # difference = (float(tendered)*100) - (float(owed)*100)
 
-    difference = float(input("what is the difference: $"))*100
+    while True:
+        difference = float(input("what is the difference: $"))*100
 
-    if difference == 0:
-        print("They have payed the exact amount")
-    elif difference < 0:
-        print(f"They still need to pay ${difference}")
-    else:
-        final = make_change(difference, mode=output_type, value_type=val_type)
-        print(final)
+        if difference == 0:
+            print("They have payed the exact amount")
+        elif difference < 0:
+            print(f"They still need to pay ${difference}")
+        else:
+            final = make_change(difference, mode=output_type, value_type=val_type)
+            print(final)
+        print()
 
 
 if __name__ == '__main__':

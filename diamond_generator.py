@@ -12,11 +12,15 @@ def create_diamond(edge_height, full_char="#", blank_char=" ") -> str:
 
 
 def main():
-    diamond_edge_height = int(input("Enter edge height of diamond: "))
-    diamond = create_diamond(diamond_edge_height, FULL_CHAR, BLACK_CHAR)
-    print()
-    print(diamond)
+    print("Welcome to the the diamond pattern generator!")
 
+    while True:
+        print()
+
+        edge_size = int(input("Enter edge height of diamond: "))
+
+        print()
+        print(create_diamond(edge_size))
 
 if __name__ == "__main__":
     main()

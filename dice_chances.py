@@ -1,4 +1,8 @@
-import numpy as np
+try:
+    import numpy as np
+except ImportError as exs:
+    raise ImportError("Sorry, you have to download this file and install numpy to run this project. Try anouther one.") from exs
+    
 """
 super inefficient but its more to learn numpy 
 """
