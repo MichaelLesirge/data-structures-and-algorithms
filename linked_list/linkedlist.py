@@ -37,16 +37,14 @@ class LinkedList:
             self.append(elem)
 
     def clear(self) -> None:
-        self.head = None
-        self.tail = None
+        self.head = self.tail = None
         self.len = 0
 
     def copy(self) -> "LinkedList":
         """
         Return a copy of the list.
         """
-        copy = LinkedList()
-        copy.extend(self)
+        copy = self.__class__(self)
         return copy
 
     def count(self, value, /) -> int:
@@ -85,7 +83,7 @@ class LinkedList:
         for index, item in enumerate(self):
             if (value == item):
                 return index
-        raise ValueError(f"{value} is not in LinkedList")
+        raise ValueError(f"{value} is not in {self.__class__.__name__}")
 
     def insert(self, index, _object, /) -> None:
         """
@@ -143,7 +141,7 @@ class LinkedList:
             current = current.next
 
         if current is None:
-            raise ValueError(f"{value} not in LinkedList")
+            raise ValueError(f"{value} not in {self.__class__.__name__}")
 
         if previous is None:
             self.head = self.head.next
@@ -152,39 +150,46 @@ class LinkedList:
 
         self.len -= 1
 
+    def _reversed_copy(self) -> "LinkedList":
+        new = self.__class__()
+        for data in self:
+            new.prepend(data)
+        return new
+
     def reverse(self) -> None:
-        reversed_self = self.__reversed__()
+        reversed_self = self._reversed_copy()
         self.head, self.tail = reversed_self.head, reversed_self.tail
 
-    # def sort(self, *, key=None, reverse: bool =False) -> None:
-    #     pass
+    # def sort(self, *, key=None, reverse: bool = False) -> None:
+        # for another day...
+        # return self.__class__(sorted(list(self), key=key, reverse=reverse))
 
     def __add__(self, other):
-        if isinstance(other, LinkedList):
+        if issubclass(LinkedList, type(other)):
             new = self.copy()
             new.extend(other)
             return new
-        raise TypeError(f"can only concatenate LinkedList (not '{type(other).__name__}') to LinkedList")
+        raise TypeError(f"can only concatenate {self.__class__.__name__} (not '{type(other).__name__}') to {self.__class__.__name__}")
 
     def __iadd__(self, other):
-        if isinstance(other, LinkedList):
+        if issubclass(LinkedList, type(other)):
             self.extend(other)
             return self
-        raise TypeError(f"can only concatenate LinkedList (not '{type(other).__name__}') to LinkedList")
+        raise TypeError(f"can only concatenate {self.__class__.__name__} (not '{type(other).__name__}') to {self.__class__.__name__}")
 
     def __mul__(self, other: int):
         if isinstance(other, int):
-            new = LinkedList()
+            new = self.__class__()
             for i in range(other):
                 new.extend(self)
             return new
-        raise TypeError(f"can't multiply LinkedList by non-int of type '{type(other).__name__}'")
+        raise TypeError(f"can't multiply {self.__class__.__name__} by non-int of type '{type(other).__name__}'")
 
     def __rmul__(self, other: int):
         return self * other
 
     def __bool__(self) -> bool:
-        return self.head is not None
+        return not self.is_empty()
 
     def __contains__(self, value) -> bool:
         for item in self:
@@ -193,7 +198,7 @@ class LinkedList:
         return False
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, LinkedList):
+        if not isinstance(other, self.__class__):
             return False
         if len(self) != len(other):
             return False
@@ -203,7 +208,7 @@ class LinkedList:
         return True
 
     def __ne__(self, other: object) -> bool:
-        if not isinstance(other, LinkedList):
+        if not isinstance(other, self.__class__):
             return True
         if len(self) != len(other):
             return True
@@ -217,7 +222,7 @@ class LinkedList:
             if key < 0:
                 key += len(self)
             if key < 0 or key >= len(self):
-                raise IndexError("LinkedList index out of range")
+                raise IndexError(f"{self.__class__.__name__} index out of range")
 
             if key == len(self) - 1:
                 return self.tail.data
@@ -241,13 +246,15 @@ class LinkedList:
 
             if step == 0:
                 raise ValueError("slice step cannot be zero")
-            elif step < 0:
+
+            if step < 0:
                 raise ValueError("reverse slice not implemented")
+                # start, stop = stop, start
 
             start = max(start, 0)
             stop = min(stop, len(self))
 
-            new = LinkedList()
+            new = self.__class__()
             current = self.head
             for _ in range(start):
                 current = current.next
@@ -265,7 +272,7 @@ class LinkedList:
         if key < 0:
             key += len(self)
         if key < 0 or key >= len(self):
-            raise IndexError("LinkedList index out of range")
+            raise IndexError(f"{self.__class__.__name__} index out of range")
 
         if key == len(self) - 1:
             self.tail.data = data
@@ -279,7 +286,7 @@ class LinkedList:
         if key < 0:
             key += len(self)
         if key < 0 or key >= len(self):
-            raise IndexError("LinkedList index out of range")
+            raise IndexError(f"{self.__class__.__name__} index out of range")
 
         if key == 0:
             self.head = self.head.next
@@ -292,10 +299,7 @@ class LinkedList:
         self.len -= 1
 
     def __reversed__(self):
-        new = LinkedList()
-        for data in self:
-            new.prepend(data)
-        return new
+        yield from self._reversed_copy()
 
     def __iter__(self):
         current = self.head
