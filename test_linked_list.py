@@ -349,7 +349,9 @@ class TestLinkedList(unittest.TestCase):
 
     def test_reverse(self):
         ll = LList([1, 2, 3, 4])
-        self.assertEqual(reversed(ll), LList([4, 3, 2, 1]))
+        self.assertEqual(LList(reversed(ll)), LList([4, 3, 2, 1]))
+
+        self.assertEqual(ll._reversed_copy(), LList([4, 3, 2, 1]))
 
         ll.reverse()
         self.assertEqual(ll, LList([4, 3, 2, 1]))

@@ -37,16 +37,14 @@ class LinkedList:
             self.append(elem)
 
     def clear(self) -> None:
-        self.head = None
-        self.tail = None
+        self.head = self.tail = None
         self.len = 0
 
     def copy(self) -> "LinkedList":
         """
         Return a copy of the list.
         """
-        copy = LinkedList()
-        copy.extend(self)
+        copy = LinkedList(self)
         return copy
 
     def count(self, value, /) -> int:
@@ -152,12 +150,19 @@ class LinkedList:
 
         self.len -= 1
 
+    def _reversed_copy(self) -> "LinkedList":
+        new = LinkedList()
+        for data in self:
+            new.prepend(data)
+        return new
+
     def reverse(self) -> None:
-        reversed_self = self.__reversed__()
+        reversed_self = self._reversed_copy()
         self.head, self.tail = reversed_self.head, reversed_self.tail
 
-    # def sort(self, *, key=None, reverse: bool =False) -> None:
-    #     pass
+    # def sort(self, *, key=None, reverse: bool = False) -> None:
+        # for another day...
+        # return self.__class__(sorted(list(self), key=key, reverse=reverse))
 
     def __add__(self, other):
         if isinstance(other, LinkedList):
@@ -184,7 +189,7 @@ class LinkedList:
         return self * other
 
     def __bool__(self) -> bool:
-        return self.head is not None
+        return not self.is_empty()
 
     def __contains__(self, value) -> bool:
         for item in self:
@@ -241,8 +246,10 @@ class LinkedList:
 
             if step == 0:
                 raise ValueError("slice step cannot be zero")
-            elif step < 0:
+
+            if step < 0:
                 raise ValueError("reverse slice not implemented")
+                # start, stop = stop, start
 
             start = max(start, 0)
             stop = min(stop, len(self))
@@ -292,10 +299,7 @@ class LinkedList:
         self.len -= 1
 
     def __reversed__(self):
-        new = LinkedList()
-        for data in self:
-            new.prepend(data)
-        return new
+        yield from self._reversed_copy()
 
     def __iter__(self):
         current = self.head
