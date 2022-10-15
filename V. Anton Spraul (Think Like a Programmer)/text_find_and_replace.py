@@ -1,17 +1,29 @@
 """
 find and replace words problem from from https://youtu.be/4Gsy27337-g?t=69
+
+must work with punction.
+
+cat should not match catalog, concatanation, ect
 """
 
-def find_and_replace(starting_text: str, old: str, new: str):
-    # no built in funtions/methods allowd
-    starting_text, old, new = list(starting_text), list(old), list(new)
+def split_words(text):
     
-    for start in range(len(starting_text)):
-        end = start + len(old)
-        if starting_text[start:end] == old:
-            starting_text[start:end] = new
+    words = []
+    current = ""
 
-    return "".join(starting_text)
+    for i, char in enumerate(text):
+        if char == " ":
+            words.append((current, (start, end)))
+            current_word = []
+            
+        
+
+    return words
+
+def find_and_replace(starting_text: str, old: str, new: str):
+    pass
+
+    
 
 def main():
     starting_text = input("Enter starting text: ")
@@ -19,7 +31,8 @@ def main():
     old = input("Enter text you want to replace: ")
     new = input("Enter new text: ")
 
-    print(find_and_replace(starting_text, old, new))
+    print(split_words(starting_text))
+    # print(find_and_replace(starting_text, old, new))
 
 if __name__ == "__main__":
     main()
