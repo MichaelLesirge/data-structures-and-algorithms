@@ -1,3 +1,7 @@
+"""
+find and replace words problem from from https://youtu.be/4Gsy27337-g?t=69
+"""
+
 def find_and_replace(starting_text: str, old: str, new: str):
     # no built in funtions/methods allowd
     starting_text, old, new = list(starting_text), list(old), list(new)
