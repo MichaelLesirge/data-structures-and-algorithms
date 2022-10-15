@@ -15,13 +15,23 @@ Police cannot be odd
 Display all valid department numbers permuations
 """
 from collections import namedtuple
+
+MIN_NUM = 1
+MAX_NUM = 7
+
+REQUIRED_SUM = 12
+
+DEPARTMENTS = ["Fire", "Police", "Sanitation"] 
+
+def department_numbers_permuations_simple(department_vals):
+    for fire in range(0, 8):
+        for police in range(0, 8, 2): # to only get even
+            for sanitation in range(0, 8):
+                if fire != police and fire != sanitation and sanitation != police:
+                    yield department_vals(fire, police, sanitation)
+
 from itertools import permutations
-
-deparmtments = ["Fire", "Police", "Sanitation"]
-
-department_vals = namedtuple("departments", deparmtments)
-
-def department_numbers_permuations(min_num, max_num, required_sum = None, *, special_conditions = None):
+def department_numbers_permuations_genral_purpose(department_vals, min_num, max_num, required_sum = None, *, special_conditions = None):
     # get all permutaions of vals
     all_deparment_vals = permutations(range(min_num, max_num+1), len(department_vals._fields))
 
@@ -39,12 +49,11 @@ def department_numbers_permuations(min_num, max_num, required_sum = None, *, spe
     return all_deparment_vals
 
 def main() -> None:
-    MIN_NUM = 1
-    MAX_NUM = 7
+    department_vals = namedtuple("departments", DEPARTMENTS)
 
-    REQUIRED_SUM = 12
+    valid_department_numbers_permuations = department_numbers_permuations_genral_purpose(department_vals, MIN_NUM, MAX_NUM, REQUIRED_SUM, special_conditions=[lambda val: val.Police % 2 == 0])
+    # valid_department_numbers_permuations = department_numbers_permuations_simple(department_vals)
 
-    valid_department_numbers_permuations = department_numbers_permuations(MIN_NUM, MAX_NUM, REQUIRED_SUM, special_conditions=[lambda val: val.Police % 2 == 0])
     for ans in valid_department_numbers_permuations:
         print(", ".join(f"{name}: #{num}" for name, num in zip(department_vals._fields, ans)))
 
