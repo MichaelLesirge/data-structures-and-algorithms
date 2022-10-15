@@ -22,9 +22,9 @@ REQUIRED_SUM = 12
 DEPARTMENTS = ["Fire", "Police", "Sanitation"] 
 
 def department_numbers_permuations_simple(department_vals):
-    for fire in range(0, 8):
+    for fire in range(8):
         for police in range(0, 8, 2): # to only get even
-            for sanitation in range(0, 8):
+            for sanitation in range(8):
                 if fire != police and fire != sanitation and sanitation != police:
                     yield department_vals(fire, police, sanitation)
 
