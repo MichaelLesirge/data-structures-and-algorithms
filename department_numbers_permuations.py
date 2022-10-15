@@ -17,7 +17,9 @@ Display all valid department numbers permuations
 from collections import namedtuple
 from itertools import permutations
 
-department_vals = namedtuple("departments", ("Fire", "Police", "Sanitation"))
+deparmtments = ["Fire", "Police", "Sanitation"]
+
+department_vals = namedtuple("departments", deparmtments)
 
 def department_numbers_permuations(min_num, max_num, required_sum = None, *, special_conditions = None):
     # get all permutaions of vals
@@ -40,11 +42,11 @@ def main() -> None:
     MIN_NUM = 1
     MAX_NUM = 7
 
-    REQUIRED_SUM = 12 
+    REQUIRED_SUM = 12
 
     valid_department_numbers_permuations = department_numbers_permuations(MIN_NUM, MAX_NUM, REQUIRED_SUM, special_conditions=[lambda val: val.Police % 2 == 0])
     for ans in valid_department_numbers_permuations:
-        print(ans)
+        print(", ".join(f"{name}: #{num}" for name, num in zip(department_vals._fields, ans)))
 
 if __name__ == "__main__":
     main()
