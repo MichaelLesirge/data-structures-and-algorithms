@@ -1,6 +1,4 @@
 """
-Problem from https://www.youtube.com/watch?v=2bkfA2fHVwg&t=360s
-
 Department numbers:
 
 - Fire
