@@ -1,0 +1,1 @@
+I'm watching and doing all the problems in the [Think Like a Programmer playlist by V. Anton Spraul](https://www.youtube.com/playlist?list=PLKQ5LYb497AZIZe9dBWy8GwLluVaMQVj0) and putting all my solitions here.
