@@ -1,9 +1,11 @@
 """
+Problem
+
 Department numbers:
 
 - Fire
 - Police
-- Sanatain
+- Sanitation
 
 Each assigned a number from 1 to 7
 All department # must be different
@@ -13,8 +15,12 @@ Police must be even
 Display all valid department numbers permuations
 """
 
+import enum
 
+class departments(enum):
+    FIRE = 0
+    POLICE = 1
+    SANITATION = 2
 
 def department_numbers_permuations():
-    # for
     pass
