@@ -12,7 +12,6 @@ def split_words(text):
     current = ""
     start = 0
     for i, char in enumerate(text+" "):
-        char:str
         if char.isalpha():
             current += char.lower()
         else:
