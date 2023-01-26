@@ -1,3 +1,3 @@
-random projects that are in some way related to learning algoriths or just for fun that I put in here.
+Random projects that are in some way related to learning data structures and algorithm or just for fun. I decided to just put them here
 
-These are all single file projects so you could copy and paste them into [here](https://www.programiz.com/python-programming/online-compiler/) for quick running on the browser.
+These are mostly all single file projects so you could copy and paste them into [here](https://www.programiz.com/python-programming/online-compiler/) for quick running on the browser.
