@@ -1,42 +1,35 @@
-units = {
-    1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
-    6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten",
-    11: "eleven", 12: "twelve", 13: "thirteen", 14: "fourteen",
-    15: "fifteen", 16: "sixteen", 17: "seventeen", 18: "eighteen",
-    19: "nineteen",
-}
+special_units = [
+    "zero", "one", "two", "three", "four",
+    "five", "six", "seven", "eight", "nine", "ten",
+    "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+    "sixteen", "seventeen", "eighteen", "nineteen",
+]
 
-tens = {
-    2: "twenty", 3: "thirty", 4: "forty", 5: "fifty",
-    6: "sixty", 7: "seventy", 8: "eighty", 9: "ninety",
-}
+tens = [
+    "zero", "ten" "twenty", "thirty", "forty", 
+    "fifty", "sixty", "seventy", "eighty", "ninety",
+]
 
-large_unites = {
-    10: ("", "-"),
-    100: (" hundred ", + " and "),
-    1000: (" thousand ", " ")
-}
-
+large_units = [
+    "thousand", "million", "billion", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", "octillion", "nonillion", "decillion", "undecillion", "duodecillion", "tredecillion", "quattuordecillion", "quindecillion", "sexdecillion", "septendecillion", "octodecillion", "novemdecillion", "vigintillion"
+]
 
 def num_to_word(n):
-    if n == 0:
-        return "zero"
-
     if n < 20:
-        return units[n]
-    
-    # TODO replace this with large_unit dict and for loop. Also use divmod 
-    elif n < 100:
-        return tens[n // 10] + ("-" + num_to_word(n % 10) if n % 10 != 0 else "")
-    elif n < 1_000:
-        return num_to_word(n // 100) + " hundred" + (" and " + num_to_word(n % 100) if n % 100 != 0 else "")
-    elif n < 1_000_000:
-        return num_to_word(n // 1000) + " thousand" + (" " + num_to_word(n % 1000) if n % 1000 != 0 else "")
-    else:
-        raise Exception("Can not handle numbers larger than 999,999")
+        return special_units[n]
 
-i = 1
-while True:
-    print(i, num_to_word(i))
-    i += 1
-    i *= 2
+    if n < 100:
+        tens, extra = divmod(n, 10)
+        return tens[tens] + ("-" + num_to_word(extra) if extra != 0 else "")
+    
+    last = 100
+    for i, unit_name in enumerate(large_units):
+        current = 1000 ** (i + 1)
+        if n < current:
+            unit, extra = divmod(n, last)
+            return f"{num_to_word(unit)} {unit_name}{' ' + num_to_word(n % 100) if n % 100 != 0 else ''}"
+        last = current
+    
+    raise Exception(f"Can not handle numbers larger than {last-1}")
+
+print(num_to_word(110))
