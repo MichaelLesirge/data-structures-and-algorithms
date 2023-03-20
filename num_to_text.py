@@ -6,7 +6,7 @@ special_units = [
 ]
 
 tens = [
-    "zero", "ten" "twenty", "thirty", "forty", 
+    "zero", "ten", "twenty", "thirty", "forty", 
     "fifty", "sixty", "seventy", "eighty", "ninety",
 ]
 
@@ -19,17 +19,20 @@ def num_to_word(n):
         return special_units[n]
 
     if n < 100:
-        tens, extra = divmod(n, 10)
-        return tens[tens] + ("-" + num_to_word(extra) if extra != 0 else "")
+        unit, extra = divmod(n, 10)
+        return tens[unit] + ("-" + num_to_word(extra) if extra != 0 else "")
     
-    last = 100
+    last = 1000
     for i, unit_name in enumerate(large_units):
-        current = 1000 ** (i + 1)
+        current = last * 1000
+        print(current, last)
         if n < current:
             unit, extra = divmod(n, last)
-            return f"{num_to_word(unit)} {unit_name}{' ' + num_to_word(n % 100) if n % 100 != 0 else ''}"
+            return f"{num_to_word(unit)} {unit_name}{' ' + num_to_word(extra) if extra != 0 else ''}"
         last = current
     
-    raise Exception(f"Can not handle numbers larger than {last-1}")
+    raise Exception(f"Can not handle numbers larger than {current-1}")
 
-print(num_to_word(110))
+print("Warning: Not funtional yet. Still a work in progress")
+while True:
+    print(num_to_word(int(input("Enter number:"))).title())
