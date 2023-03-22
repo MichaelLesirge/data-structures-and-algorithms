@@ -11,7 +11,7 @@ tens = [
 ]
 
 large_units = [
-    "thousand", "million", "billion", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", "octillion", "nonillion", "decillion", "undecillion", "duodecillion", "tredecillion", "quattuordecillion", "quindecillion", "sexdecillion", "septendecillion", "octodecillion", "novemdecillion", "vigintillion"
+    "zero", "thousand", "million", "billion", "trillion",
 ]
 
 def num_to_word(n):
@@ -24,15 +24,16 @@ def num_to_word(n):
     
     last = 1000
     for i, unit_name in enumerate(large_units):
-        current = last * 1000
-        print(current, last)
-        if n < current:
-            unit, extra = divmod(n, last)
-            return f"{num_to_word(unit)} {unit_name}{' ' + num_to_word(extra) if extra != 0 else ''}"
-        last = current
+        if (i == 0): continue
+        for j in range(3):
+            current = 1000 ** (i + j)
+            print((n,), (i, unit_name), divmod(n, last) if n <= current else (), (current, last))
+            if n <= current:
+                unit, extra = divmod(n, last)
+                return f"{num_to_word(unit)} {unit_name}{' ' + num_to_word(extra) if extra != 0 else ''}"
+            last = current
     
     raise Exception(f"Can not handle numbers larger than {current-1}")
 
-print("Warning: Not funtional yet. Still a work in progress")
 while True:
-    print(num_to_word(int(input("Enter number:"))).title())
+    print(num_to_word(int(input("Enter number: "))).title())
