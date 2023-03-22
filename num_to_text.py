@@ -11,7 +11,7 @@ tens = [
 ]
 
 large_units = [
-    "hundred" "thousand", "million", "billion", "trillion",
+    "hundred", "thousand", "million", "billion", "trillion",
 ]
 
 def num_to_word(n):
