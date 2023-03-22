@@ -1,35 +1,49 @@
-special_units = [
+special_unit_words = [
     "zero", "one", "two", "three", "four",
     "five", "six", "seven", "eight", "nine", "ten",
     "eleven", "twelve", "thirteen", "fourteen", "fifteen",
     "sixteen", "seventeen", "eighteen", "nineteen",
 ]
 
-tens = [
+tens_words = [
     "zero", "ten", "twenty", "thirty", "forty", 
     "fifty", "sixty", "seventy", "eighty", "ninety",
 ]
 
-large_units = [
+large_unit_words = [
     "hundred", "thousand", "million", "billion", "trillion",
 ]
 
-def num_to_word(n):
+def num_to_word(n: int) -> str:
+    if n == 0: return "zero"
+    word_components = num_to_word_components(abs(n))
+    if n < 0: word_components.insert(0, "negitive")
+    return " ".join(word_components)
+    
+        
+
+def num_to_word_components(n: int) -> list[str]:
+    if n == 0:
+        return []
+    
     if n < 20:
-        return special_units[n]
+        return [special_unit_words[n]]
 
     if n < 100:
-        value, extra = divmod(n, 10)
-        return tens[value] + ("-" + num_to_word(extra) if extra != 0 else "")
+        tens_count, extra = divmod(n, 10)
+        return ["-".join([tens_words[tens_count]] + num_to_word_components(extra))]
 
     last = 100
     current = 1
-    for word in large_units:
+    for unit_word in large_unit_words:
         current *= 1000
         if n < current:
-            value, extra = divmod(n, last)
-            return num_to_word(value) + " " + word + (" " + num_to_word(extra) if extra else "")
+            unit_count, extra = divmod(n, last)
+            return num_to_word_components(unit_count) + [unit_word] + num_to_word_components(extra)
         last = current
+    
+    raise Exception(f"Can not convert number higher than {current-1}")
     
 while True:
     print(num_to_word(int(input("Enter number: "))).title())
+ 
