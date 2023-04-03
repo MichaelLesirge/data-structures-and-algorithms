@@ -1,4 +1,6 @@
-ROUND_TO = False
+ROUND_TO = 3  # leave 1 decimal
+# ROUND_TO = False  # No rounding
+
 
 def main():
     print("Welcome to dice chance calculator!")
@@ -16,7 +18,7 @@ def main():
     
     most_common_nums = calculator.most_common_nums()
 
-    print(f"There are {calculator.possible_outcomes} possible roles that are between {calculator.min} and {calculator.max}.")
+    print(f"There are {calculator.possible_permutations} possible roles that are between {calculator.min} and {calculator.max}.")
     if len(most_common_nums) == 2:
         print(f"The most likely roles are either a {most_common_nums[0]} or a {most_common_nums[1]}.")
     else:
@@ -25,7 +27,7 @@ def main():
     while True:
         number = int(input("Enter your number: "))
         print(f"Chance of the sum of the dice being {number} on a roll:")
-        print(f"{calculator.pertantage_chance_of_num(number)}, {calculator.count_of_num(number)} in {calculator.possible_outcomes}")
+        print(f"{calculator.pertantage_chance_of_num(number, decimal_digits=5)}, {calculator.count_of_num(number)} in {calculator.possible_permutations}")
         print()
 
 class DiceCalculator:
@@ -39,18 +41,13 @@ class DiceCalculator:
     def count_of_num(self, x: int) -> int:
         if not self.is_in_range(x):
             return 0
-
+        
+        # https://www.desmos.com/calculator/mz5n5venip
         most_common_nums = self.most_common_nums()
-        if len(most_common_nums) == 1:
-            low_num = high_num = most_common_nums[0]
-        else:
-            low_num, high_num = most_common_nums
-
-        if x < self.mean:
-            count = (x+low_num)-low_num-1
-        else:
-            count = (x+high_num)-high_num-1
-        return count
+        
+        nearest_mean = most_common_nums[len(most_common_nums) and most_common_nums[0] > ] 
+        
+        return nearest_mean - abs(x - nearest_mean) * (self.count - 1)
         
     def probability_of_num(self, x: int) -> float:
         """
@@ -58,24 +55,22 @@ class DiceCalculator:
         """
         if not self.is_in_range(x):
             return 0
-        return self.count_of_num(x) / self.possible_outcomes
+        return self.count_of_num(x) / self.possible_permutations
         
-    def pertantage_chance_of_num(self, x: int, / , round_to=ROUND_TO) -> str:
+    def pertantage_chance_of_num(self, x: int, *, decimal_digits = 3) -> str:
         """
         percentage chance of roling x
         """
         chance = self.probability_of_num(x)*100
-        if round_to is not False:
-            chance = round(chance, round_to)
-        return str(chance) + "%"
+        return str(round(chance, decimal_digits)) + "%"
 
     def most_common_nums(self) -> tuple[int, ...]:
         """
         returns the most common final sums of numbers
         """
         if self.mean % 1 == 0.5:
-            return (self.median, self.median+1)
-        return (self.median,)
+            return (int(self.mean - 0.5), int(self.mean + 0.5))
+        return (int(self.mean),)
 
     def is_in_range(self, x) -> bool:
         return self.min <= x <= self.max
@@ -85,9 +80,9 @@ class DiceCalculator:
         return (self.min + self.max) / 2
 
     @property
-    def median(self) -> int:
-        return int(self.mean)
-
+    def median(self) -> float:
+        return self.sides + 1 / self.count
+        
     @property
     def min(self) -> int:
         """
@@ -103,14 +98,14 @@ class DiceCalculator:
         return self.count * self.sides
 
     @property
-    def range(self) -> int:
+    def range_size(self) -> int:
         """
         number of final answers
         """
         return self.max - self.min
 
     @property
-    def possible_outcomes(self) -> int:
+    def possible_permutations(self) -> int:
         """
         how many possible conbantions
         """
