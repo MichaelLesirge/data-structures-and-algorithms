@@ -11,7 +11,7 @@ tens_words = [
 ]
 
 large_unit_words = [
-    "hundred", "thousand", "million", "billion", "trillion",
+    "hundred", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", "octillion", "nonillion", "decillion", "undecillion", "duodecillion", "tredecillion", "quatttuor-decillion", "quindecillion", "sexdecillion", "septen-decillion", "octodecillion", "novemdecillion", "vigintillion"
 ]
 
 def num_to_word(n: int) -> str:
