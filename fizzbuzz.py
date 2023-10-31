@@ -12,7 +12,7 @@ def main():
     print(fizzbuzz(compare_func=lambda num, compare: num % compare == 0 and num % 7 != 0))
 
 
-# Final version, use passed in funtion to compare. Also don't set mutable object as default argument
+# Final version, use passed in funtion to compare.
 def fizzbuzz(upper_bound: int = 100, *, fizzbuzz_map: dict[int, str] = {3: "Fizz", 5: "Buzz"}, compare_func: Callable[[int, int], bool] = lambda num, compare: num % compare == 0) -> str:
     return "\n".join(
         "".join(word for compare_value, word in fizzbuzz_map.items() if compare_func(num, compare_value)) or str(num)
