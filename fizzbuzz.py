@@ -59,10 +59,9 @@ def fizzbuzz_v1(n: int = 100, *, mapper: dict[int, str] = None) -> None:
 # My Code Golf FizzBuzz Function. 
 def f():[print('Fizz'[i%3*4:]+'Buzz'[i%5*4:]or i) for i in range(1,101)]
 
-# Fizzbuzz in just 62 charters. Only 3 more charters than the shortest one possible fizzbuzz in python3 (at least from what I found)
+# Fizzbuzz in just 62 charters. Only 3 more charters than the shortest one possible fizzbuzz in python3 (at least from what I found).
+# I did not look at other cold golfed fizzbuzz solutions before making this
 # for i in range(1,101):print('Fizz'[i%3*4:]+'Buzz'[i%5*4:]or i)
 
 if __name__ == "__main__":
-    for i in range(100):print(i%3//2*"Fizz"+i%5//4*"Buzz"or-~i)
-    # f()
-    # main()
+    main()
