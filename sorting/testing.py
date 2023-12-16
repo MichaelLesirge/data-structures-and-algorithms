@@ -1,21 +1,12 @@
 import unittest
 
-import random
+import algorithms
+from util import make_random
 
-import bubble, insertion, selection, merge, quick
-
-
-def make_random(length: int, num_range: tuple[int, int] = None) -> list[int]:
-    array = [(random.randint(*num_range) + 1 if num_range else i) for i in range(length)]
-    if num_range is None: random.shuffle(array)
-    return array
-
-algorithms = [bubble.bubble_sort, insertion.insertion_sort, selection.selection_sort, merge.merge_sort, quick.quick_sort]
-
-class TestLinkedList(unittest.TestCase):
+class TestSorts(unittest.TestCase):
     def assert_all_sorted(self, array: list):
         sorted_array = sorted(array)
-        for algorithm in algorithms:
+        for algorithm in algorithms.__all__:
             array_copy = array.copy()
             algorithm(array_copy)
             self.assertEqual(array_copy, sorted_array, f"Failed algorithm: {algorithm.__name__}")
@@ -43,6 +34,9 @@ class TestLinkedList(unittest.TestCase):
             
     def test_negative_long(self):
         self.assert_all_sorted(make_random(20, num_range=(-100, 100)))
+
+if __name__ == '__main__':
+    unittest.main()
 
 if __name__ == '__main__':
     unittest.main()

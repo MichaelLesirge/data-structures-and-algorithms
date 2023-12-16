@@ -1,3 +1,18 @@
+"""
+Time Complexity: average O(N log(N)), worst O(N^2)
+Auxiliary Space: O(1)
+
+divide and conquer that picks pivot then partisans array around it
+
+Pros:
+- almost always O(N log(N)) performance 
+- good on long lists
+
+Cons:
+- worst case O(N^2) if there is a bad pivot
+- not the best for small lists
+
+"""
 
 def swap(array: list, i: int, j: int) -> None:
     array[i], array[j] = array[j], array[i]
