@@ -1,5 +1,5 @@
 # Sorting
-Sorting unit of are intermediate programming proggraming class. Implemented bubble sort, insertion sort, selection sort, merge sort, and quick sort. I also made a visulizer for the time taken for each and for the time it takes them to sort.
+Implemented bubble sort, insertion sort, selection sort, merge sort, and quick sort. I also made a visulizer for the time taken for each and for the time it takes them to sort. I originally made this during my [intermediate programming class](https://github.com/michael-lesirge/intermediate-programming-class) to make the sorting unit more interesting.
 
 ## Sorting Animation
 Sorting 20 element long lists. The GIF is a little choppy so I suggest you run this one for yourself.
