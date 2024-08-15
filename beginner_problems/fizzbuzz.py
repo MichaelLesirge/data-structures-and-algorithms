@@ -1,6 +1,6 @@
 from typing import Callable
 
-""""""
+"""Fizzbuzz from simple to complex"""
 
 def main():
     print("Standard FizzBuzz:")
