@@ -9,26 +9,29 @@ from sorting.config import Config
 
 import pygame
 
-Config.SORTING_ALGORITHMS = ["bubble_sort", "insertion_sort", "selection_sort", "merge_sort", "quick_sort"]
+config = Config()
 
-Config.SCREEN_WIDTH = 1000
-Config.SCREEN_HEIGHT = 600
+# bubble_sort, insertion_sort, selection_sort, merge_sort, quick_sort
+config.DEMO_SORTING_ALGORITHMS = ["bubble_sort", "insertion_sort", "selection_sort", "merge_sort", "quick_sort"]
 
-Config.BASE_FPS = 60
+config.DEMO_LIST_NUM_RANGE = None  # leave as none to auto smooth generate range of numbers
+# config.DEMO_LIST_NUM_RANGE = (0, 10000)
 
-Config.DEMO_LIST_NUM_RANGE = None
-Config.DEMO_LIST_LENGTHS = [10, 25, 100, 250, 500, 1000]
-Config.SPEEDS = []
+config.DEMO_LIST_LENGTHS = [10, 25, 100, 250, 500, 1000]
+config.SPEEDS = []
 
-Config.WAIT_AT_END = 0.5
+config.SCREEN_WIDTH = 1000
+config.SCREEN_HEIGHT = 600
 
-Config.BACKGROUND_COLOR = pygame.Color("black")
-Config.DEFAULT_BLOCK_COLOR = pygame.Color("white")
+config.BACKGROUND_COLOR = pygame.Color("black")
+config.DEFAULT_BLOCK_COLOR = pygame.Color("white")
 
-Config.READ_BLOCK_COLOR = pygame.Color("grey")
-Config.PAST_WRITE_BLOCK_COLOR = pygame.Color("aquamarine2")
-Config.WRITE_BLOCK_COLOR = pygame.Color("green")
+config.READ_BLOCK_COLOR = pygame.Color("grey")
+config.PAST_WRITE_BLOCK_COLOR = pygame.Color("aquamarine2")
+config.WRITE_BLOCK_COLOR = pygame.Color("green")
 
-Config.TEXT_COLOR = pygame.Color(200, 200, 250)
+config.TEXT_COLOR = pygame.Color(200, 200, 250)
 
-main()
+config.DELAY_AFTER_COMPLETION = 0.5
+
+main(config)

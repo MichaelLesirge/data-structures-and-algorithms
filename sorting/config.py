@@ -1,7 +1,7 @@
 import pygame
 
 class Config:
-    SORTING_ALGORITHMS = ["bubble_sort", "insertion_sort", "selection_sort", "merge_sort", "quick_sort"]
+    DEMO_SORTING_ALGORITHMS = ["bubble_sort", "insertion_sort", "selection_sort", "merge_sort", "quick_sort"]
     
     SCREEN_WIDTH = 1000
     SCREEN_HEIGHT = 600
@@ -13,7 +13,7 @@ class Config:
     
     SPEEDS = []
 
-    WAIT_AT_END = 0.5
+    DELAY_AFTER_COMPLETION = 0.5
     
     BACKGROUND_COLOR = pygame.Color(0, 0, 0)
     DEFAULT_BLOCK_COLOR = pygame.Color(255, 255, 255)
