@@ -32,8 +32,10 @@ def main(config: Config = Config()):
         Hit Space To Create Start/End
         Use arrows to move end
           
-        R to Reset Maze
-        C to Clear Screen""")
+        R to Randomly Generate new Maze
+        C to Clear Screen
+        F to Fill Screen
+          """)
 
     screen = pygame.display.set_mode((SCREEN_PX_WIDTH, SCREEN_PX_HEIGHT))
     screen_rect = screen.get_rect()
@@ -72,6 +74,10 @@ def main(config: Config = Config()):
                     end_position = None
                 if event.key == pygame.K_c:
                     grid.fill(config.EMPTY)
+                    start_position = None
+                    end_position = None
+                if event.key == pygame.K_f:
+                    grid.fill(config.WALL)
                     start_position = None
                     end_position = None
                 if event.key == pygame.K_SPACE:
@@ -217,9 +223,8 @@ def solve_maze_and_draw_path(grid, start, end, config):
         return abs(b[0] - a[0]) + abs(b[1] - a[1])
 
     def get_neighbors(pos):
-        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
         result = []
-        for direction in directions:
+        for direction in config.SOLVER_DIRECTIONS:
             neighbor = (pos[0] + direction[0], pos[1] + direction[1])
             if 0 <= neighbor[0] < len(grid) and 0 <= neighbor[1] < len(grid[0]) and grid[neighbor] != config.WALL:
                 result.append(neighbor)

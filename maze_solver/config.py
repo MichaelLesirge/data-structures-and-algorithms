@@ -9,4 +9,6 @@ class Config:
     START = "#27AE60"       # Emerald green
     END = "#C0392B"         # Deep red
 
+    SOLVER_DIRECTIONS = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
     CORRIDOR_WIDTH = 3

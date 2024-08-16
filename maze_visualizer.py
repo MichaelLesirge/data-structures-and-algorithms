@@ -18,6 +18,10 @@ config.PATH = "#E67E22"        # Vibrant orange
 config.START = "#27AE60"       # Emerald green
 config.END = "#C0392B"         # Deep red
 
-config.CORRIDOR_WIDTH = 3
+# 2 for corridor, 1 for wall
+config.CORRIDOR_WIDTH = 2 + 1
+
+config.SOLVER_DIRECTIONS = [(0, 1), (1, 0), (0, -1), (-1, 0)]       # down, right, up left
+# config.SOLVER_DIRECTIONS += [(1, 1), (1, -1), (-1, 1), (-1, -1)]  # Add Diagonals
 
 main(config)
