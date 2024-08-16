@@ -1,15 +1,23 @@
 from typing import Generator
-import numpy as np
-import pygame
-from pygame import Color, Vector2
 import random
+import heapq
+
+import numpy as np
+
+import pygame
+
+Color = pygame.Color
 
 pygame.init()
 
-GRID_WIDTH = 80 + 1
-GRID_HEIGHT = int(GRID_WIDTH / 1.618) + 1
 
-CORRIDOR_WIDTH = 5
+DESIRED_GRID_WIDTH = 80
+DESIRED_GRID_HEIGHT = int(DESIRED_GRID_WIDTH / 1.618)
+
+CORRIDOR_WIDTH = 4
+
+GRID_WIDTH = int(DESIRED_GRID_WIDTH // CORRIDOR_WIDTH * CORRIDOR_WIDTH) + 1
+GRID_HEIGHT = int(DESIRED_GRID_HEIGHT // CORRIDOR_WIDTH * CORRIDOR_WIDTH) + 1
 
 GRID_SQUARE_PX_WIDTH = 10
 GRID_SQUARE_PX_HEIGHT = 10
@@ -17,22 +25,36 @@ GRID_SQUARE_PX_HEIGHT = 10
 SCREEN_PX_WIDTH = GRID_WIDTH * GRID_SQUARE_PX_WIDTH
 SCREEN_PX_HEIGHT = GRID_HEIGHT * GRID_SQUARE_PX_HEIGHT
 
-WALL = "black"
-EMPTY = "white"
+BACKGROUND = "#F0E7D8"  # Soft cream
+WALL = "#2C3E50"        # Dark blue-gray
+EMPTY = "#ECF0F1"       # Light gray
 
-START = "aquamarine4"
-END = "brown1"
+PATH = "#E67E22"        # Vibrant orange
+
+START = "#27AE60"       # Emerald green
+END = "#C0392B"         # Deep red
 
 def main():
+
+    print("""
+        Drag to draw walls
+        Ctrl+Drag to draw walls
+          
+        Hit Space To Create Start/End
+        Use arrows to move end
+          
+        R to Reset Maze
+        C to Clear Screen
+        
+    """)
+
     screen = pygame.display.set_mode((SCREEN_PX_WIDTH, SCREEN_PX_HEIGHT))
     screen_rect = screen.get_rect()
-    pygame.display.set_caption("Maze Generator")
+    pygame.display.set_caption("Maze Generator and Solver")
 
     clock = pygame.time.Clock()
 
     grid = np.empty((GRID_HEIGHT, GRID_WIDTH), dtype=Color)
-    
-    # offsets = create_offset_array(DRAWING_PAINT_BRUSH_SIZE)
     
     easer = pygame.Surface((10,10))
     easer.fill("grey")
@@ -50,9 +72,6 @@ def main():
     end_position = None
 
     while running:
-
-        do_cursor_reset = True
-
         mouse_position = pygame.mouse.get_pos()
         mouse_grid_position = (mouse_position[0] // GRID_SQUARE_PX_WIDTH, mouse_position[1] // GRID_SQUARE_PX_HEIGHT)
 
@@ -60,13 +79,14 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
-
-                if event.key == pygame.K_a:
-                    generate_maze(grid, CORRIDOR_WIDTH)
-
                 if event.key == pygame.K_r:
+                    generate_maze(grid, CORRIDOR_WIDTH)
+                    start_position = None
+                    end_position = None
+                if event.key == pygame.K_c:
                     grid.fill(EMPTY)
-
+                    start_position = None
+                    end_position = None
                 if event.key == pygame.K_SPACE:
                     if start_position is None:
                         start_position = (mouse_grid_position[1], mouse_grid_position[0])
@@ -75,27 +95,47 @@ def main():
                         if end_position is not None:
                             grid[end_position] = EMPTY
                         end_position = (mouse_grid_position[1], mouse_grid_position[0])
-                        grid[end_position] = END
                     
-                    print(f"Finding path from {start_position} to {end_position}")
-
-                    # solve_maze_and_draw_path(screen, grid, start_position, end_position)
-
-                    do_cursor_reset = False
                     pygame.mouse.set_cursor(draw_cursor)
+                if (event.key == pygame.K_UP):
+                    if end_position is None:
+                        end_position = start_position
+                    if end_position is not None:
+                        grid[end_position] = EMPTY
+                        end_position = (end_position[0] - 1, end_position[1])
+                if (event.key == pygame.K_DOWN):
+                    if end_position is None:
+                        end_position = start_position
+                    if end_position is not None:
+                        grid[end_position] = EMPTY
+                        end_position = (end_position[0] + 1, end_position[1])
+                if (event.key == pygame.K_LEFT):
+                    if end_position is None:
+                        end_position = start_position
+                    if end_position is not None:
+                        grid[end_position] = EMPTY
+                        end_position = (end_position[0], end_position[1] - 1)
+                if (event.key == pygame.K_RIGHT):
+                    if end_position is None:
+                        end_position = start_position
+                    if end_position is not None:
+                        grid[end_position] = EMPTY
+                        end_position = (end_position[0], end_position[1] + 1)
+
+        if end_position:
+            grid[end_position] = END
 
         mouse_buttons = pygame.mouse.get_pressed(3)
-
         keyboard = pygame.key.get_pressed()
 
-        if mouse_buttons[0] and screen_rect.contains(mouse_position, (1, 1)):
-            erase_mode = keyboard[pygame.K_e]
-            
-            do_cursor_reset = False
-            pygame.mouse.set_cursor(easer_cursor if erase_mode else draw_cursor)
+        erase_mode = keyboard[pygame.K_e] or keyboard[pygame.K_LCTRL] or keyboard[pygame.K_RCTRL]
+        
+        pygame.mouse.set_cursor(easer_cursor if erase_mode else draw_cursor)
 
+        if mouse_buttons[0] and screen_rect.contains(mouse_position, (1, 1)):
             for grid_position in get_line_points(grid, mouse_grid_position, last_mouse_position or mouse_grid_position):
-                grid[grid_position] = EMPTY if erase_mode else WALL
+                if grid[grid_position] not in [START, END]:
+                    grid[grid_position] = EMPTY if erase_mode else WALL
 
             last_mouse_position = mouse_grid_position
         else:
@@ -106,8 +146,9 @@ def main():
         if end_position and grid[end_position] != END:
             end_position = None
         
-        if do_cursor_reset:
-            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+        clear_path(grid)
+        if start_position and end_position:
+            solve_maze_and_draw_path(grid, start_position, end_position)
             
         screen.fill("white")
         for x in range(len(grid)):
@@ -145,37 +186,103 @@ def get_line_points(grid, pos1, pos2) -> Generator[tuple[int, int], None, None]:
             y0 += sy
 
 def generate_maze(grid, corridor_width=1):
-    wall, empty = EMPTY, WALL
-
     directions = [(0, corridor_width), (corridor_width, 0), (0, -corridor_width), (-corridor_width, 0)]
 
-    def carve_passage_from(x, y):
-        random.shuffle(directions)
+    def is_valid(x, y):
+        return 0 <= y < len(grid) and 0 <= x < len(grid[0])
 
-        for dx, dy in directions:
-            nx, ny = x + dx, y + dy
-            if 0 <= ny < len(grid) and 0 <= nx < len(grid[0]) and grid[ny, nx] == wall:
-                # Carve the corridor
-                for i in range(corridor_width):
-                    grid[y + i * dy // corridor_width, x + i * dx // corridor_width] = empty
-                grid[ny, nx] = empty
-                carve_passage_from(nx, ny)
+    def is_unvisited(x, y):
+        return is_valid(x, y) and grid[y, x] == EMPTY
 
-    grid.fill(wall)
+    def carve_passage(x1, y1, x2, y2):
+        for i in range(corridor_width + 1):
+            ny = y1 + i * (y2 - y1) // corridor_width
+            nx = x1 + i * (x2 - x1) // corridor_width
+            if is_valid(nx, ny):
+                grid[ny, nx] = WALL
 
-    start_x = random.randrange(0, GRID_WIDTH, corridor_width)
-    start_y = random.randrange(0, GRID_HEIGHT, corridor_width)
-    grid[start_y, start_x] = empty
+    def recursive_backtracker(x, y):
+        grid[y, x] = WALL
+        neighbors = [(x + dx, y + dy) for dx, dy in directions]
+        random.shuffle(neighbors)
+        
+        for nx, ny in neighbors:
+            if is_unvisited(nx, ny):
+                carve_passage(x, y, nx, ny)
+                recursive_backtracker(nx, ny)
 
-    carve_passage_from(start_x, start_y)
+    grid.fill(EMPTY)
 
-def create_offset_array(side_padding: int) -> np.ndarray:
-    size = 3 ** side_padding
-    offset_range = np.arange(-(size // 2), (size // 2) + 1)
-    x_offsets, y_offsets = np.meshgrid(offset_range, offset_range)
-    offsets = np.stack((x_offsets.ravel(), y_offsets.ravel()), axis=-1)
-    
-    return offsets
+    # Start from a random cell that's aligned with the corridor width
+    start_x = random.randrange(corridor_width, GRID_WIDTH - corridor_width, corridor_width)
+    start_y = random.randrange(corridor_width, GRID_HEIGHT - corridor_width, corridor_width)
+
+    recursive_backtracker(start_x, start_y)
+
+    # Fill in the border
+    grid[0, :] = WALL
+    grid[-1, :] = WALL
+    grid[:, 0] = WALL
+    grid[:, -1] = WALL
+
+def clear_path(grid):
+    for x in range(len(grid)):
+        for y in range(len(grid[0])):
+            if grid[x, y] == PATH:
+                grid[x, y] = EMPTY
+
+def solve_maze_and_draw_path(grid, start, end):
+    def heuristic(a, b):
+        return abs(b[0] - a[0]) + abs(b[1] - a[1])
+
+    def get_neighbors(pos):
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        result = []
+        for direction in directions:
+            neighbor = (pos[0] + direction[0], pos[1] + direction[1])
+            if 0 <= neighbor[0] < len(grid) and 0 <= neighbor[1] < len(grid[0]) and grid[neighbor] != WALL:
+                result.append(neighbor)
+        return result
+
+    def a_star(start, goal):
+        frontier = []
+        heapq.heappush(frontier, (0, start))
+        came_from = {start: None}
+        cost_so_far = {start: 0}
+
+        while frontier:
+            current = heapq.heappop(frontier)[1]
+
+            if current == goal:
+                break
+
+            for next in get_neighbors(current):
+                new_cost = cost_so_far[current] + 1
+                if next not in cost_so_far or new_cost < cost_so_far[next]:
+                    cost_so_far[next] = new_cost
+                    priority = new_cost + heuristic(goal, next)
+                    heapq.heappush(frontier, (priority, next))
+                    came_from[next] = current
+
+        if goal not in came_from:
+            return None
+
+        path = []
+        current = goal
+        while current != start:
+            path.append(current)
+            current = came_from[current]
+        path.append(start)
+        path.reverse()
+        return path
+
+    path = a_star(start, end)
+    if path:
+        for pos in path:
+            if grid[pos] not in [START, END]:
+                grid[pos] = PATH
+    else:
+        print("No path found")
 
 if __name__ == "__main__":
     main()
