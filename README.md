@@ -17,6 +17,5 @@ Simple maze generator using a recursive backtracking algorithm and maze solver t
 
 Pathfinder though auto generated "perfect" maze
 ![maze generation and solving](https://github.com/user-attachments/assets/7a4309db-e599-475d-82f8-c6791c073b0e)
-
 Drawing obstacles to navigate around
 ![drawing and solving](https://github.com/user-attachments/assets/297e9f3f-a93e-4862-a6c0-707b0e861c30)
