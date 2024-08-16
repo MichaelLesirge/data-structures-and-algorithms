@@ -6,26 +6,25 @@ import random
 
 pygame.init()
 
-WIDTH_PX = 800
-HEIGHT_PX = int(round(WIDTH_PX / 1.618, -1))
+GRID_WIDTH = 80 + 1
+GRID_HEIGHT = int(GRID_WIDTH / 1.618) + 1
 
-GRID_SQUARE_WIDTH = 10
-GRID_SQUARE_HEIGHT = 10
+CORRIDOR_WIDTH = 5
 
-GRID_WIDTH = WIDTH_PX // GRID_SQUARE_WIDTH
-GRID_HEIGHT = HEIGHT_PX // GRID_SQUARE_HEIGHT
+GRID_SQUARE_PX_WIDTH = 10
+GRID_SQUARE_PX_HEIGHT = 10
 
-CORRIDOR_WIDTH = 3
-
-DRAWING_PAINT_BRUSH_SIZE = 1
+SCREEN_PX_WIDTH = GRID_WIDTH * GRID_SQUARE_PX_WIDTH
+SCREEN_PX_HEIGHT = GRID_HEIGHT * GRID_SQUARE_PX_HEIGHT
 
 WALL = "black"
 EMPTY = "white"
 
-START = "green"
+START = "aquamarine4"
+END = "brown1"
 
 def main():
-    screen = pygame.display.set_mode((WIDTH_PX, HEIGHT_PX))
+    screen = pygame.display.set_mode((SCREEN_PX_WIDTH, SCREEN_PX_HEIGHT))
     screen_rect = screen.get_rect()
     pygame.display.set_caption("Maze Generator")
 
@@ -47,14 +46,15 @@ def main():
     running = True
     last_mouse_position = None
 
-    create_start = True
+    start_position = None
+    end_position = None
 
     while running:
 
         do_cursor_reset = True
 
         mouse_position = pygame.mouse.get_pos()
-        mouse_grid_position = (mouse_position[0] // GRID_SQUARE_WIDTH, mouse_position[1] // GRID_SQUARE_HEIGHT)
+        mouse_grid_position = (mouse_position[0] // GRID_SQUARE_PX_WIDTH, mouse_position[1] // GRID_SQUARE_PX_HEIGHT)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -68,9 +68,18 @@ def main():
                     grid.fill(EMPTY)
 
                 if event.key == pygame.K_SPACE:
+                    if start_position is None:
+                        start_position = (mouse_grid_position[1], mouse_grid_position[0])
+                        grid[start_position] = START 
+                    else:
+                        if end_position is not None:
+                            grid[end_position] = EMPTY
+                        end_position = (mouse_grid_position[1], mouse_grid_position[0])
+                        grid[end_position] = END
+                    
+                    print(f"Finding path from {start_position} to {end_position}")
 
-                    if (create_start):
-                        pass
+                    # solve_maze_and_draw_path(screen, grid, start_position, end_position)
 
                     do_cursor_reset = False
                     pygame.mouse.set_cursor(draw_cursor)
@@ -91,6 +100,11 @@ def main():
             last_mouse_position = mouse_grid_position
         else:
             last_mouse_position = None
+
+        if start_position and grid[start_position] != START:
+            start_position = None
+        if end_position and grid[end_position] != END:
+            end_position = None
         
         if do_cursor_reset:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -98,7 +112,7 @@ def main():
         screen.fill("white")
         for x in range(len(grid)):
             for y in range(len(grid[x])):
-                pygame.draw.rect(screen, grid[x, y], (y * GRID_SQUARE_WIDTH, x * GRID_SQUARE_HEIGHT, GRID_SQUARE_WIDTH, GRID_SQUARE_HEIGHT))
+                pygame.draw.rect(screen, grid[x, y], (y * GRID_SQUARE_PX_WIDTH, x * GRID_SQUARE_PX_HEIGHT, GRID_SQUARE_PX_WIDTH, GRID_SQUARE_PX_HEIGHT))
 
         pygame.display.flip()
         clock.tick(60)
@@ -132,8 +146,6 @@ def get_line_points(grid, pos1, pos2) -> Generator[tuple[int, int], None, None]:
 
 def generate_maze(grid, corridor_width=1):
     wall, empty = EMPTY, WALL
-
-    corridor_width += 1
 
     directions = [(0, corridor_width), (corridor_width, 0), (0, -corridor_width), (-corridor_width, 0)]
 
