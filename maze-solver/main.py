@@ -10,11 +10,10 @@ Color = pygame.Color
 
 pygame.init()
 
-
 DESIRED_GRID_WIDTH = 80
 DESIRED_GRID_HEIGHT = int(DESIRED_GRID_WIDTH / 1.618)
 
-CORRIDOR_WIDTH = 4
+CORRIDOR_WIDTH = 3
 
 GRID_WIDTH = int(DESIRED_GRID_WIDTH // CORRIDOR_WIDTH * CORRIDOR_WIDTH) + 1
 GRID_HEIGHT = int(DESIRED_GRID_HEIGHT // CORRIDOR_WIDTH * CORRIDOR_WIDTH) + 1
@@ -44,9 +43,7 @@ def main():
         Use arrows to move end
           
         R to Reset Maze
-        C to Clear Screen
-        
-    """)
+        C to Clear Screen""")
 
     screen = pygame.display.set_mode((SCREEN_PX_WIDTH, SCREEN_PX_HEIGHT))
     screen_rect = screen.get_rect()
@@ -124,6 +121,8 @@ def main():
 
         if end_position:
             grid[end_position] = END
+        if start_position:
+            grid[start_position] = START
 
         mouse_buttons = pygame.mouse.get_pressed(3)
         keyboard = pygame.key.get_pressed()
@@ -186,44 +185,42 @@ def get_line_points(grid, pos1, pos2) -> Generator[tuple[int, int], None, None]:
             y0 += sy
 
 def generate_maze(grid, corridor_width=1):
-    directions = [(0, corridor_width), (corridor_width, 0), (0, -corridor_width), (-corridor_width, 0)]
+    grid.fill(WALL)
+    
+    directions = [(0, corridor_width), (0, -corridor_width), (corridor_width, 0), (-corridor_width, 0)]
 
-    def is_valid(x, y):
-        return 0 <= y < len(grid) and 0 <= x < len(grid[0])
+    def get_neighbor(pos, direction):
+        return pos[0] + direction[0], pos[1] + direction[1]
+    
+    def path(x, y, value):
+        for dx in range(corridor_width - 1):
+            for dy in range(corridor_width - 1):
+                grid[x + dx, y + dy] = value
+    
+    def recursive_backtracking(x, y):
+        directions_copy = directions[:]
+        random.shuffle(directions_copy)
 
-    def is_unvisited(x, y):
-        return is_valid(x, y) and grid[y, x] == EMPTY
+        for direction in directions_copy:
+            nx, ny = get_neighbor((x, y), direction)
+            
+            if 1 <= nx < len(grid) - 1 and 1 <= ny < len(grid[0]) - 1 and grid[nx, ny] == WALL:
+                path(x + direction[0] // 2, y + direction[1] // 2, EMPTY)
+                path(nx, ny, EMPTY)
+                recursive_backtracking(nx, ny)
+    
+    start_x = random.randrange(1, len(grid) - 1, corridor_width)
+    start_y = random.randrange(1, len(grid[0]) - 1, corridor_width)
+    
+    path(start_x, start_y, EMPTY)
+    recursive_backtracking(start_x, start_y)
+    
+    # Ensure the grid borders are walls
+    # grid[0, :] = WALL
+    # grid[-1, :] = WALL
+    # grid[:, 0] = WALL
+    # grid[:, -1] = WALL
 
-    def carve_passage(x1, y1, x2, y2):
-        for i in range(corridor_width + 1):
-            ny = y1 + i * (y2 - y1) // corridor_width
-            nx = x1 + i * (x2 - x1) // corridor_width
-            if is_valid(nx, ny):
-                grid[ny, nx] = WALL
-
-    def recursive_backtracker(x, y):
-        grid[y, x] = WALL
-        neighbors = [(x + dx, y + dy) for dx, dy in directions]
-        random.shuffle(neighbors)
-        
-        for nx, ny in neighbors:
-            if is_unvisited(nx, ny):
-                carve_passage(x, y, nx, ny)
-                recursive_backtracker(nx, ny)
-
-    grid.fill(EMPTY)
-
-    # Start from a random cell that's aligned with the corridor width
-    start_x = random.randrange(corridor_width, GRID_WIDTH - corridor_width, corridor_width)
-    start_y = random.randrange(corridor_width, GRID_HEIGHT - corridor_width, corridor_width)
-
-    recursive_backtracker(start_x, start_y)
-
-    # Fill in the border
-    grid[0, :] = WALL
-    grid[-1, :] = WALL
-    grid[:, 0] = WALL
-    grid[:, -1] = WALL
 
 def clear_path(grid):
     for x in range(len(grid)):
