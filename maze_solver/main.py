@@ -123,8 +123,7 @@ def main(config: Config = Config()):
 
         if mouse_buttons[0] and screen_rect.contains(mouse_position, (1, 1)):
             for grid_position in get_line_points(grid, mouse_grid_position, last_mouse_position or mouse_grid_position):
-                if grid[grid_position] not in [config.START, config.END]:
-                    grid[grid_position] = config.EMPTY if erase_mode else config.WALL
+                grid[grid_position] = config.EMPTY if erase_mode else config.WALL
 
             last_mouse_position = mouse_grid_position
         else:
