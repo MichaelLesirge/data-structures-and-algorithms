@@ -1,0 +1,10 @@
+
+class Config:
+    NODE_RADIUS = 25
+    SPRINGINESS = 0.1
+    DAMPING = 0.85
+    CHILD_MOVE_FACTOR = 0.2
+
+    LEVEL_SPACING = 80
+
+    STARTING_NODES = [10]
