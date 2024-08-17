@@ -1,6 +1,5 @@
 # Advent of Code 2023
 
-I learned about Advent of Code this year from intermediate programming at school.
-Stopped this year but want to come back to it
+Did not do much of this year, but will try next year
 
 https://adventofcode.com/2023/
