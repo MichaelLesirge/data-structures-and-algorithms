@@ -22,7 +22,7 @@ class Config:
     PAST_WRITE_BLOCK_COLOR = pygame.Color("aquamarine2")
     WRITE_BLOCK_COLOR = pygame.Color("green")
 
-    BLOCK_GAP = 1
+    BLOCK_GAP_PX = 1
     
     TEXT_COLOR = (200, 200, 250)
     

@@ -84,7 +84,7 @@ def main(config: Config = Config()):
                 read_color = config.READ_BLOCK_COLOR,
                 past_write_color = config.PAST_WRITE_BLOCK_COLOR,
                 write_color = config.WRITE_BLOCK_COLOR,
-                gap = config.BLOCK_GAP
+                gap = config.BLOCK_GAP_PX
             )
 
             try:
