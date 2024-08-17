@@ -56,18 +56,21 @@ def main(config: Config = Config()):
                             raise InterruptedError("Ended by user")
                         
                 fps = int(config.BASE_FPS * fps_adjuster) if fps_adjuster else 1
-                                
-                fps_data = (f"{fps} FPS" +
-                            ("" if fps_adjuster in (0, 1) else f" ({fps_adjuster}x speed)") +
-                            ("" if fps - clock.get_fps() < 100 else f". Real FPS {int(round(clock.get_fps(), -2))}") +
-                            ".")
+                                                                
+                fps_data = (""
+                    # f"{fps} FPS" +
+                    + ("" if fps_adjuster in (0, 1) else f" ({fps_adjuster}x speed)")
+                    # + ("" if fps - clock.get_fps() < 100 else f". Real FPS {int(round(clock.get_fps(), -2))}")
+                    # + "."
+                )
                 text = font.render(f"{sorter.__name__} - {display_array.reads} reads, {display_array.writes} writes. {fps_data}",
                                    True, config.TEXT_COLOR)
                 
                 screen.fill(config.BACKGROUND_COLOR)
 
+                screen.blit(text, (0, 0))
                 display_array.draw()
-                screen.blit(text, text.get_rect())
+                screen.blit(text, (0, 0))
                 
                 pygame.display.flip()
                 clock.tick(fps)
@@ -76,10 +79,12 @@ def main(config: Config = Config()):
 
             display_array = TrackingArray(
                 array, screen, update_screen,
+
                 default_color = config.DEFAULT_BLOCK_COLOR,
                 read_color = config.READ_BLOCK_COLOR,
                 past_write_color = config.PAST_WRITE_BLOCK_COLOR,
                 write_color = config.WRITE_BLOCK_COLOR,
+                gap = config.BLOCK_GAP
             )
 
             try:

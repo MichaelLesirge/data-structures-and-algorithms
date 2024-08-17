@@ -11,6 +11,8 @@ class TrackingArray(list):
             screen: pygame.Surface,
             update_func: Callable[[Self], None],
 
+            gap = 0,
+
             default_color = pygame.Color(255, 255, 255),            
             read_color = pygame.Color("grey"),
             past_write_color = pygame.Color("aquamarine2"),
@@ -25,6 +27,8 @@ class TrackingArray(list):
         self.read_color = to_rgba(read_color or default_color)
         self.past_write_color = to_rgba(past_write_color or default_color)
         self.write_color = to_rgba(write_color or default_color)
+
+        self.margin = gap
         
         self.reads = 0
         self.writes = 0
@@ -38,7 +42,7 @@ class TrackingArray(list):
         height = self.screen.get_height()
         return pygame.Rect(
             (width * index), height - (height / self.max) * value,
-            width, height
+            width - self.margin, height
         )
     
     def draw(self) -> None:

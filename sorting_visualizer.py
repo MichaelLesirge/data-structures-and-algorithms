@@ -30,6 +30,8 @@ config.READ_BLOCK_COLOR = pygame.Color("grey")
 config.PAST_WRITE_BLOCK_COLOR = pygame.Color("aquamarine2")
 config.WRITE_BLOCK_COLOR = pygame.Color("green")
 
+config.BLOCK_GAP = 1
+
 config.TEXT_COLOR = pygame.Color(200, 200, 250)
 
 config.DELAY_AFTER_COMPLETION = 0.5
