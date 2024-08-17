@@ -21,6 +21,10 @@ Drawing obstacles to navigate around
 # Binary Tree
 Binary search tree visualizer. Currently pretty simple but I wanted to put it here since it fits.
 
+Adding Nodes to Binary Search Tree
 ![Entering numbers in search tree GIF](https://github.com/user-attachments/assets/a52ed8b1-a863-4b47-9ea0-02ccfdb0ef67)
+Dragging Nodes in tree
+![Entering and dragging nodes GIF](https://github.com/user-attachments/assets/363e6fff-b44d-4076-a879-80e7a0285f4a)
+
 
 Also check out my [LeetCode](https://github.com/michael-lesirge/leetcode) repo.
