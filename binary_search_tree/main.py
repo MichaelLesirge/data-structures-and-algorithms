@@ -12,8 +12,11 @@ pygame.init()
 
 WIDTH, HEIGHT = 800, 600
 
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+COLOR = (255, 255, 255)
+BACKGROUND_COLOR = (0, 0, 0)
+
+GRAY = (128, 128, 128)
+LIGHT_GRAY = (192, 192, 192)
 
 # Node class
 class Node:
@@ -58,7 +61,7 @@ class Node:
 
         luminance = (0.2126 * color[0]) + (0.7152 * color[1]) + (0.0722 * color[2])
 
-        text_color = WHITE if luminance < 128 else BLACK
+        text_color = "white" if luminance < 128 else "black"
 
         pygame.draw.circle(screen, color, (int(self.position.x), int(self.position.y)), self.NODE_RADIUS)
 
@@ -91,12 +94,14 @@ class Node:
 
 class BinarySearchTree:
     LEVEL_SPACING = 0.2
+    FLY_OFF_SPEED = 30
 
     def __init__(self, values: list[int] = None) -> None:
-        self.root: Node | None = None  
+        self.root: Node | None = None
+        self.flying_nodes: list[Node] = []
 
         for value in (values or []):
-            self.insert(value, with_bounce=False)  
+            self.insert(value, with_bounce=False)
 
     def insert(self, value: int, with_bounce: bool = True) -> None:
 
@@ -109,8 +114,12 @@ class BinarySearchTree:
             node.update_color_bounds(self.first() or 0, self.last() or 0)
     
     def clear(self) -> None:
+        if self.root:
+            self.flying_nodes = list(self._in_order())
+            for i, node in enumerate(self.flying_nodes):
+                node.velocity = Vector2(i, -self.FLY_OFF_SPEED)
         self.root = None
-
+        
     def first(self) -> int:
         node = self._first(self.root)
         return node.value if node else None
@@ -151,24 +160,52 @@ class BinarySearchTree:
                 self._update_node_positions(node.right, position + Vector2(offset, self.LEVEL_SPACING), offset // 2)
 
     def draw(self, screen: pygame.Surface) -> None:
-        for node in self._in_order():
-            node.update_position()
-        for node in self._in_order():
-            if node.left:
-                pygame.draw.line(screen, WHITE, (node.position.x, node.position.y), (node.left.position.x, node.left.position.y), 2)
-            if node.right:
-                pygame.draw.line(screen, WHITE, (node.position.x, node.position.y), (node.right.position.x, node.right.position.y), 2)
-        for node in self._in_order():
+        if self.root:
+            for node in self._in_order():
+                node.update_position()
+            for node in self._in_order():
+                if node.left:
+                    pygame.draw.line(screen, COLOR, (node.position.x, node.position.y), (node.left.position.x, node.left.position.y), 2)
+                if node.right:
+                    pygame.draw.line(screen, COLOR, (node.position.x, node.position.y), (node.right.position.x, node.right.position.y), 2)
+            for node in self._in_order():
+                node.draw(screen)
+        
+        for node in self.flying_nodes:
+            node.position += node.velocity
             node.draw(screen)
+        
+        self.flying_nodes = [node for node in self.flying_nodes if node.position.y + Node.NODE_RADIUS >= 0]
     
     def _in_order(self) -> Iterator[Node]:
         if self.root is None:
             return
         yield from self.root
+        
+class Button:
+    def __init__(self, x, y, width, height, text, color, hover_color, text_color, font):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text = text
+        self.color = color
+        self.hover_color = hover_color
+        self.text_color = text_color
+        self.font = font
+        self.is_hovered = False
 
-# Main loop
+    def draw(self, screen):
+        color = self.hover_color if self.is_hovered else self.color
+        pygame.draw.rect(screen, color, self.rect)
+        text_surface = self.font.render(self.text, True, self.text_color)
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        screen.blit(text_surface, text_rect)
+
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)
+
+    def update_hover(self, pos):
+        self.is_hovered = self.rect.collidepoint(pos)
+
 def main(config: Config = Config()):
-
     # Screen setup
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Binary Search Tree Visualizer")
@@ -184,8 +221,7 @@ def main(config: Config = Config()):
 
     print("""
         Type a number to add node
-          
-        Press C to clear tree
+        Click 'Clear' button or press C to clear tree
           """)
 
     tree = BinarySearchTree(config.STARTING_NODES)
@@ -194,23 +230,30 @@ def main(config: Config = Config()):
     running = True
 
     font = pygame.font.SysFont(None, 48)
+    button_font = pygame.font.SysFont(None, 36)
 
     hide_instructions_at = time.time() + 3
     show_instructions = True
+
+    # Create Clear button
+    clear_button = Button(WIDTH - 120, 10, 100, 50, "Clear", GRAY, LIGHT_GRAY, COLOR, button_font)
     
     while running:
-        screen.fill(BLACK)
+        screen.fill(BACKGROUND_COLOR)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    # Check if a node is clicked
-                    for node in tree._in_order():
-                        if node.position.distance_to(event.pos) < node.NODE_RADIUS:
-                            selected_node = node
-                            break
+                    if clear_button.is_clicked(event.pos):
+                        tree.clear()
+                    else:
+                        # Check if a node is clicked
+                        for node in tree._in_order():
+                            if node.position.distance_to(event.pos) < node.NODE_RADIUS:
+                                selected_node = node
+                                break
             elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     selected_node = None
@@ -219,6 +262,7 @@ def main(config: Config = Config()):
                     offset = Vector2(event.pos) - selected_node.target
                     selected_node.target = Vector2(event.pos)
                     selected_node.move_children(offset)
+                clear_button.update_hover(event.pos)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:
                     tree.clear()
@@ -236,13 +280,16 @@ def main(config: Config = Config()):
         if show_instructions:
             if input_value or time.time() > hide_instructions_at:
                 show_instructions = False
-            text = font.render("Enter a number: ___", True, WHITE)
+            text = font.render("Enter a number: ___", True, COLOR)
         else:
-            text = font.render(input_value, True, WHITE)
+            text = font.render(input_value, True, COLOR)
 
         tree.draw(screen)
         screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT - 40))
         
+        # Draw the Clear button
+        clear_button.draw(screen)
+
         pygame.display.flip()
         clock.tick(60)
 
