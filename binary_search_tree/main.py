@@ -22,9 +22,9 @@ LIGHT_GRAY = (192, 192, 192)
 class Node:
 
     NODE_RADIUS = 25
-    SPRINGINESS = 0.1
-    DAMPING = 0.85
-    CHILD_MOVE_FACTOR = 0.2
+    SPRINGINESS = 0.01
+    DAMPING = 0.75
+    CHILD_MOVE_FACTOR = 0.5
 
     def __init__(self, value: int, x: int, y: int) -> None:
         self.value = value
@@ -226,12 +226,12 @@ def main(config: Config = Config()):
 
     clock = pygame.time.Clock()
 
-    Node.NODE_RADIUS = Config.NODE_RADIUS
-    Node.SPRINGINESS = Config.SPRINGINESS
-    Node.DAMPING = Config.DAMPING
-    Node.CHILD_MOVE_FACTOR = Config.CHILD_MOVE_FACTOR
+    Node.NODE_RADIUS = config.NODE_RADIUS
+    Node.SPRINGINESS = config.SPRINGINESS
+    Node.DAMPING = config.DAMPING
+    Node.CHILD_MOVE_FACTOR = config.CHILD_MOVE_FACTOR
     
-    BinarySearchTree.LEVEL_SPACING = Config.LEVEL_SPACING
+    BinarySearchTree.LEVEL_SPACING = config.LEVEL_SPACING
 
     print("""
         Type a number to add node

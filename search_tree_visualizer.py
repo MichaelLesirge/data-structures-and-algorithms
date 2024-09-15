@@ -10,9 +10,9 @@ from binary_search_tree.config import Config
 config = Config()
 
 config.NODE_RADIUS = 25
-config.SPRINGINESS = 0.1
-config.DAMPING = 0.85
-config.CHILD_MOVE_FACTOR = 0.2
+config.SPRINGINESS = 0.01
+config.DAMPING = 0.75
+config.CHILD_MOVE_FACTOR = 0.5
 
 config.LEVEL_SPACING = 80
 
