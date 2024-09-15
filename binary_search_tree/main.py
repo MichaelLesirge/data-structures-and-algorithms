@@ -94,7 +94,6 @@ class Node:
 
 class BinarySearchTree:
     LEVEL_SPACING = 0.2
-    FLY_OFF_SPEED = 30
 
     def __init__(self, values: list[int] = None) -> None:
         self.root: Node | None = None
@@ -116,10 +115,25 @@ class BinarySearchTree:
     def clear(self) -> None:
         if self.root:
             self.flying_nodes = list(self._in_order())
-            for i, node in enumerate(self.flying_nodes):
-                node.velocity = Vector2(i, -self.FLY_OFF_SPEED)
+            for node in self.flying_nodes:
+                node.velocity = Vector2((node.position.x - (WIDTH / 2)) * 0.1, -30).clamp_magnitude(30)
         self.root = None
-        
+
+
+    def balance(self) -> None:
+        nodes = list(self._in_order())
+        self.root = self._build_balanced_tree(nodes)
+        self._update_node_positions(self.root, Vector2(WIDTH // 2, 50), WIDTH // 4)
+
+    def _build_balanced_tree(self, nodes: list[Node]) -> Node | None:
+        if not nodes:
+            return None
+        mid = len(nodes) // 2
+        root = nodes[mid]
+        root.left = self._build_balanced_tree(nodes[:mid])
+        root.right = self._build_balanced_tree(nodes[mid+1:])
+        return root
+
     def first(self) -> int:
         node = self._first(self.root)
         return node.value if node else None
@@ -222,6 +236,7 @@ def main(config: Config = Config()):
     print("""
         Type a number to add node
         Click 'Clear' button or press C to clear tree
+        Click 'Balance' button or press B to balance tree
           """)
 
     tree = BinarySearchTree(config.STARTING_NODES)
@@ -237,6 +252,8 @@ def main(config: Config = Config()):
 
     # Create Clear button
     clear_button = Button(WIDTH - 120, 10, 100, 50, "Clear", GRAY, LIGHT_GRAY, COLOR, button_font)
+    # Create Balance button
+    balance_button = Button(WIDTH - 240, 10, 100, 50, "Balance", GRAY, LIGHT_GRAY, COLOR, button_font)
     
     while running:
         screen.fill(BACKGROUND_COLOR)
@@ -248,6 +265,8 @@ def main(config: Config = Config()):
                 if event.button == 1:
                     if clear_button.is_clicked(event.pos):
                         tree.clear()
+                    elif balance_button.is_clicked(event.pos):
+                        tree.balance()
                     else:
                         # Check if a node is clicked
                         for node in tree._in_order():
@@ -263,10 +282,13 @@ def main(config: Config = Config()):
                     selected_node.target = Vector2(event.pos)
                     selected_node.move_children(offset)
                 clear_button.update_hover(event.pos)
+                balance_button.update_hover(event.pos)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:
                     tree.clear()
-                if event.key == pygame.K_RETURN and input_value:
+                elif event.key == pygame.K_b:
+                    tree.balance()
+                elif event.key == pygame.K_RETURN and input_value:
                     if input_value == "-":  # Prevent adding just a "-"
                         input_value = ''
                     else:
@@ -287,8 +309,9 @@ def main(config: Config = Config()):
         tree.draw(screen)
         screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT - 40))
         
-        # Draw the Clear button
+        # Draw the Clear and Balance buttons
         clear_button.draw(screen)
+        balance_button.draw(screen)
 
         pygame.display.flip()
         clock.tick(60)
