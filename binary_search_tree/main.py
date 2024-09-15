@@ -22,7 +22,7 @@ LIGHT_GRAY = (192, 192, 192)
 class Node:
 
     NODE_RADIUS = 25
-    SPRINGINESS = 0.01
+    SPRINGINESS = 0.7
     DAMPING = 0.75
     CHILD_MOVE_FACTOR = 0.5
 
