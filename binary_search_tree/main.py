@@ -251,9 +251,9 @@ def main(config: Config = Config()):
     show_instructions = True
 
     # Create Clear button
-    clear_button = Button(WIDTH - 120, 10, 100, 50, "Clear", GRAY, LIGHT_GRAY, COLOR, button_font)
+    clear_button = Button(10, HEIGHT - 60, 100, 50, "Clear", GRAY, LIGHT_GRAY, COLOR, button_font)
     # Create Balance button
-    balance_button = Button(WIDTH - 240, 10, 100, 50, "Balance", GRAY, LIGHT_GRAY, COLOR, button_font)
+    balance_button = Button(WIDTH - 10 - 100, HEIGHT - 60, 100, 50, "Balance", GRAY, LIGHT_GRAY, COLOR, button_font)
     
     while running:
         screen.fill(BACKGROUND_COLOR)
