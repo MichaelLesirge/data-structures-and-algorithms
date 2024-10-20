@@ -27,14 +27,14 @@ def main(config: Config = Config()):
 
     print("""
         Drag to draw walls
-        Ctrl+Drag to draw walls
+        Ctrl+Drag to remove walls
           
-        Hit Space To Create Start/End
+        Hit space to create start/end
         Use arrows to move end
           
-        R to Randomly Generate new Maze
-        C to Clear Screen
-        F to Fill Screen
+        R to randomly generate new maze
+        C to clear screen
+        F to fill screen
           """)
 
     screen = pygame.display.set_mode((SCREEN_PX_WIDTH, SCREEN_PX_HEIGHT))
