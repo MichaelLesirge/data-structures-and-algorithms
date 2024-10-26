@@ -122,6 +122,7 @@ def main(config: Config = Config()):
                     toggle_button.text = "Pause" if not paused else "Start"
                 elif event.key == pygame.K_r:
                     grid = np.random.choice([0, 1], size=(config.GRID_HEIGHT, config.GRID_WIDTH), p=[0.9, 0.1])
+                    update_count = 0
                 elif event.key == pygame.K_c:
                     grid.fill(0)
                     update_count = 0
