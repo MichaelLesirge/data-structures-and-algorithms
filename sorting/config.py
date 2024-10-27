@@ -23,6 +23,9 @@ class Config:
     WRITE_BLOCK_COLOR = pygame.Color("green")
 
     BLOCK_GAP_PX = 1
+
+    MIN_HEIGHT_PERCENT = 0
+    MAX_HEIGHT_PERCENT = 1
     
     TEXT_COLOR = (200, 200, 250)
     
@@ -30,3 +33,5 @@ class Config:
 
     FONT_PATH = 'sorting/font.ttf'
     FONT_SIZE = 16
+
+    PLAY_SOUNDS = True

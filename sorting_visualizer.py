@@ -15,13 +15,14 @@ config = Config()
 # Options include bubble_sort, insertion_sort, selection_sort, merge_sort, quick_sort
 config.DEMO_SORTING_ALGORITHMS = ["bubble_sort", "insertion_sort", "selection_sort", "merge_sort", "quick_sort"]
 
+# Lengths of list to sort
+config.DEMO_LIST_LENGTHS = [2**i for i in range(3, 10)]
+# config.DEMO_LIST_LENGTHS = [10, 25, 100, 250, 500, 1000]
+
 # Range of numbers to sort in demo.
 # Leave as none to auto smooth generate range of numbers, or give [min, max] for random distribution
 config.DEMO_LIST_NUM_RANGE = None 
 # config.DEMO_LIST_NUM_RANGE = (0, 100)
-
-# Lengths of list to sort
-config.DEMO_LIST_LENGTHS = [10, 25, 100, 250, 500, 1000]
 
 # Background color
 config.BACKGROUND_COLOR = pygame.Color("black")
@@ -39,5 +40,12 @@ config.BLOCK_GAP_PX = 1
 
 # How long to wait after sorting is finished before moving on
 config.DELAY_AFTER_COMPLETION = 0.5
+
+# Min and max height of rectangles.
+# If min is 0 then smallest number does not show up, and if max is one then largest number touches top of screen
+config.MIN_HEIGHT_PERCENT = 0.01
+config.MAX_HEIGHT_PERCENT = 0.99
+
+config.PLAY_SOUNDS = True
 
 main(config)

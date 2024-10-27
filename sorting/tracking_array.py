@@ -4,19 +4,23 @@ import pygame
 
 def to_rgba(color: pygame.Color): return (color.r, color.g, color.b, color.a)
 
+def scale_between(unscaled_num, min_allowed, max_allowed, min, max):
+  return (max_allowed - min_allowed) * (unscaled_num - min) / (max - min) + min_allowed
+
+
 class TrackingArray(list):
     def __init__(
             self,
             array: list[int],
             screen: pygame.Surface,
             update_func: Callable[[Self], None],
-
-            gap = 0,
-
             default_color = pygame.Color(255, 255, 255),            
             read_color = pygame.Color("grey"),
             past_write_color = pygame.Color("aquamarine2"),
             write_color = pygame.Color("green"),
+            margin: int = 0,
+            min_height_percent: float = 0,
+            max_height_percent: float = 1
         ):
         super().__init__(array)
 
@@ -28,8 +32,11 @@ class TrackingArray(list):
         self.past_write_color = to_rgba(past_write_color or default_color)
         self.write_color = to_rgba(write_color or default_color)
 
-        self.margin = gap
+        self.margin = margin
         
+        self.min_height_percent = min_height_percent
+        self.max_height_percent = max_height_percent
+
         self.reads = 0
         self.writes = 0
 
@@ -40,9 +47,11 @@ class TrackingArray(list):
     def get_rect(self, index, value):
         width = self.screen.get_width() / len(self)
         height = self.screen.get_height()
+        min_allowed = height * self.min_height_percent
+        max_allowed = height * self.max_height_percent
         return pygame.Rect(
-            (width * index), height - (height / self.max) * value,
-            width - self.margin, height
+            (width * index), scale_between((height - (height / self.max) * value), min_allowed, max_allowed, 0, height),
+            width - self.margin, scale_between(height, min_allowed, max_allowed, 0, height)
         )
     
     def draw(self) -> None:

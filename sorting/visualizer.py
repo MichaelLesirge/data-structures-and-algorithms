@@ -5,7 +5,7 @@ import pygame
 
 from config import Config
 from util import make_random
-from tracking_array import TrackingArray
+from sound_tracking_array import SoundTrackingArray
 
 def load_sorting_algorithms(names: list[str]):
     return [getattr(importlib.import_module('algorithms'), algo) for algo in names]
@@ -40,7 +40,7 @@ def main(config: Config = Config()):
         for sorter in sorting_algorithms:
             fps_adjuster = fps_adjuster_default
                                 
-            def update_screen(display_array: TrackingArray):
+            def update_screen(display_array: SoundTrackingArray):
                 nonlocal fps_adjuster
                                                                 
                 for event in pygame.event.get():
@@ -77,14 +77,18 @@ def main(config: Config = Config()):
                             
             array = make_random(length, config.DEMO_LIST_NUM_RANGE) 
 
-            display_array = TrackingArray(
-                array, screen, update_screen,
-
+            display_array = SoundTrackingArray(
+                array = array,
+                screen = screen, 
+                update_func = update_screen,
+                play_sounds = config.PLAY_SOUNDS,
                 default_color = config.DEFAULT_BLOCK_COLOR,
                 read_color = config.READ_BLOCK_COLOR,
                 past_write_color = config.PAST_WRITE_BLOCK_COLOR,
                 write_color = config.WRITE_BLOCK_COLOR,
-                gap = config.BLOCK_GAP_PX
+                margin = config.BLOCK_GAP_PX,
+                min_height_percent = config.MIN_HEIGHT_PERCENT,
+                max_height_percent = config.MAX_HEIGHT_PERCENT,
             )
 
             try:
